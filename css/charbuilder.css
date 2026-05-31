@@ -1,0 +1,99 @@
+@layer vetools {
+	.charbuilder__toolbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		margin: 8px 0 12px;
+	}
+
+	.charbuilder__toolbar-note {
+		font-style: italic;
+		opacity: 0.8;
+	}
+
+	.charbuilder__form {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		padding-bottom: 24px;
+	}
+
+	.charbuilder__panel {
+		padding: 10px 12px;
+		border: 1px solid rgba(0, 0, 0, 0.15);
+		border-radius: 4px;
+		background: rgba(0, 0, 0, 0.02);
+	}
+
+	.ve-night-mode .charbuilder__panel {
+		border-color: rgba(255, 255, 255, 0.15);
+		background: rgba(255, 255, 255, 0.03);
+	}
+
+	.charbuilder__panel-title {
+		margin: 4px 0 10px;
+		padding-bottom: 8px;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+	}
+
+	.ve-night-mode .charbuilder__panel-title {
+		border-bottom-color: rgba(255, 255, 255, 0.15);
+	}
+
+	.charbuilder__ability-row {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.charbuilder__ability-row .ve-form-control {
+		flex: 1;
+	}
+
+	.charbuilder__mod {
+		min-width: 46px;
+		text-align: center;
+		font-weight: bold;
+		padding: 6px 8px;
+		border: 1px solid rgba(0, 0, 0, 0.2);
+		border-radius: 4px;
+	}
+
+	.ve-night-mode .charbuilder__mod {
+		border-color: rgba(255, 255, 255, 0.25);
+	}
+
+	.charbuilder__equipment-rows {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.charbuilder__equipment-row {
+		padding: 8px 10px;
+		border-radius: 4px;
+		background: rgba(0, 0, 0, 0.04);
+	}
+
+	.ve-night-mode .charbuilder__equipment-row {
+		background: rgba(255, 255, 255, 0.05);
+	}
+
+	.charbuilder__equipment-actions {
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.charbuilder__equipment-remove-col {
+		display: flex;
+		align-items: flex-end;
+	}
+
+	@media (max-width: 767px) {
+		.charbuilder__toolbar {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+	}
+}

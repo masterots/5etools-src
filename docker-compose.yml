@@ -1,0 +1,37 @@
+services:
+  5etools:
+    build: .
+    container_name: 5etools
+    ports:
+      - "5050:80"
+    volumes:
+      - ./img:/usr/share/nginx/html/img:ro
+    restart: unless-stopped
+    # Uncomment the following for production with resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    
+    # Environment variables (if needed in the future)
+    environment:
+      - NODE_ENV=production
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/index.html"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+    # Optional: Add logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

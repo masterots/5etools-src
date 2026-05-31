@@ -5,6 +5,9 @@
 !manifest.webmanifest
 !sw.js
 !sw-injector.js
+!package.json
+!package-lock.json
+!nginx.conf
 
 !*.html
 !*.png
@@ -18,9 +21,12 @@
 !homebrew
 !icon
 !image
-!img
 !js
 !lib
+!node
 !pdf
 !prerelease
+!scss
 !search
+!sw-template.js
+!sw-injector-template.js
