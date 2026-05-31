@@ -21,6 +21,8 @@ export default function CharBuilder () {
 		allBackgrounds,
 		backgroundsLoading,
 		allClasses,
+		allClassFeatures,
+		allSubclasses,
 		classesLoading,
 	} = useCharbuilderReferenceData();
 
@@ -69,6 +71,8 @@ export default function CharBuilder () {
 						<Box sx={{display: step === STEP_CLASSES ? "block" : "none"}}>
 							<ClassLevelsSection
 								allClasses={allClasses}
+								allClassFeatures={allClassFeatures}
+								allSubclasses={allSubclasses}
 								classesLoading={classesLoading}
 								onBack={() => {
 									setStep(STEP_RACE);

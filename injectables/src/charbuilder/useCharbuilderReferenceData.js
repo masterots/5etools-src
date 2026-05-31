@@ -6,6 +6,8 @@ export function useCharbuilderReferenceData () {
 	const [allBackgrounds, setAllBackgrounds] = useState([]);
 	const [backgroundsLoading, setBackgroundsLoading] = useState(true);
 	const [allClasses, setAllClasses] = useState([]);
+	const [allClassFeatures, setAllClassFeatures] = useState([]);
+	const [allSubclasses, setAllSubclasses] = useState([]);
 	const [classesLoading, setClassesLoading] = useState(true);
 
 	useEffect(() => {
@@ -67,8 +69,12 @@ export function useCharbuilderReferenceData () {
 					}
 				}
 				setAllClasses(classData?.class ?? []);
+				setAllClassFeatures(classData?.classFeature ?? []);
+				setAllSubclasses(classData?.subclass ?? []);
 			} catch {
 				setAllClasses([]);
+				setAllClassFeatures([]);
+				setAllSubclasses([]);
 			} finally {
 				setClassesLoading(false);
 			}
@@ -87,6 +93,8 @@ export function useCharbuilderReferenceData () {
 		allBackgrounds,
 		backgroundsLoading,
 		allClasses,
+		allClassFeatures,
+		allSubclasses,
 		classesLoading,
 	};
 }

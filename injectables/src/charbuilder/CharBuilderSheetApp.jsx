@@ -19,6 +19,7 @@ import {useCharbuilderReferenceData} from "./useCharbuilderReferenceData.js";
 import {
 	formatSignedNumber,
 	getAbilityModifier,
+	getEffectiveAbilityScore,
 	getProficiencyBonusFromLevel,
 	getTotalCharacterLevel,
 } from "./charbuilder-calculations.js";
@@ -158,7 +159,7 @@ function AbilitiesSummary ({values}) {
 	return (
 		<Grid container spacing={1}>
 			{ABILITIES.map(({key, label}) => {
-				const score = Number(values[key]) || 10;
+				const score = getEffectiveAbilityScore({values, abilityKey: key});
 				const mod = getAbilityModifier(score);
 
 				return (
@@ -184,6 +185,8 @@ export default function CharBuilderSheetApp ({hostBridge}) {
 		allBackgrounds,
 		backgroundsLoading,
 		allClasses,
+		allClassFeatures,
+		allSubclasses,
 		classesLoading,
 	} = useCharbuilderReferenceData();
 
@@ -340,6 +343,8 @@ export default function CharBuilderSheetApp ({hostBridge}) {
 									{activeEditor === EDITOR_CLASSES ? (
 										<ClassLevelsSection
 											allClasses={allClasses}
+											allClassFeatures={allClassFeatures}
+											allSubclasses={allSubclasses}
 											classesLoading={classesLoading}
 											overlayContainer={overlayContainer}
 											onBack={() => {}}
@@ -349,7 +354,7 @@ export default function CharBuilderSheetApp ({hostBridge}) {
 									) : null}
 
 									{activeEditor === EDITOR_ABILITIES ? (
-										<AbilityScoresSection values={values} />
+										<AbilityScoresSection values={values} showNavigation={false} />
 									) : null}
 								</SectionEditorPanel>
 							)}
