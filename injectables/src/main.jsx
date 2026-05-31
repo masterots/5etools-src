@@ -6,6 +6,7 @@ import ScopedCssBaseline from "@mui/material/ScopedCssBaseline";
 import {ThemeProvider, createTheme} from "@mui/material/styles";
 import {DemoReactiveForm} from "./DemoReactiveForm.jsx";
 import CharBuilder from "./charbuilder/CharBuilder.jsx";
+import CharBuilderSheetApp from "./charbuilder/CharBuilderSheetApp.jsx";
 
 const ATTR_ISLAND = "data-5etools-island";
 const ATTR_PROPS = "data-5etools-island-props";
@@ -15,6 +16,7 @@ const TAG_ISLAND_HOST = "fiveetools-island-host";
 const ISLAND_COMPONENTS = {
 	"demo-form": DemoReactiveForm,
 	"charbuilder": CharBuilder,
+	"charbuilder-sheet": CharBuilderSheetApp,
 };
 
 const _mountedRoots = new WeakMap();
@@ -84,6 +86,9 @@ function _createMuiTheme (themeInfo) {
 				},
 			},
 		},
+		typography: {
+			fontSize: 24,
+		},
 	});
 }
 
@@ -99,7 +104,6 @@ class FiveEToolsIslandHost extends HTMLElement {
 				width: 100%;
 				color: inherit;
 				font: inherit;
-				contain: content;
 			}
 
 			[data-react-root] {

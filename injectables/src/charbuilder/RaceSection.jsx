@@ -39,7 +39,7 @@ function _getRenderedDetailHtml (entity) {
 	return `<div><h4>${entity.name || "Race"}</h4><p>${text}</p></div>`;
 }
 
-export function RaceSection ({allRaces, racesLoading, raceValue, onBack, onNext}) {
+export function RaceSection ({allRaces, racesLoading, raceValue, onBack, onNext, showNavigation = true}) {
 	const form = useForm();
 	const {values} = useFormState({subscription: {values: true}});
 	const [search, setSearch] = useState("");
@@ -305,14 +305,16 @@ export function RaceSection ({allRaces, racesLoading, raceValue, onBack, onNext}
 				</Grid>
 			</Grid>
 
-			<Stack direction="row" justifyContent="space-between" sx={{mt: 2}}>
-				<Button type="button" variant="outlined" onClick={onBack}>
-					Back
-				</Button>
-				<Button type="button" variant="contained" onClick={onNext}>
-					Next
-				</Button>
-			</Stack>
+			{showNavigation && (
+				<Stack direction="row" justifyContent="space-between" sx={{mt: 2}}>
+					<Button type="button" variant="outlined" onClick={onBack}>
+						Back
+					</Button>
+					<Button type="button" variant="contained" onClick={onNext}>
+						Next
+					</Button>
+				</Stack>
+			)}
 		</Paper>
 	);
 }

@@ -26,12 +26,17 @@ function FinalTextField ({name, label, parse, ...rest}) {
 	);
 }
 
-function FinalAutocomplete ({name, label, disabled, loading, options}) {
+function FinalAutocomplete ({name, label, disabled, loading, options, overlayContainer}) {
 	return (
 		<Field name={name}>
 			{({input}) => (
 				<Autocomplete
-					disablePortal
+					disablePortal={!overlayContainer}
+					slotProps={{
+						popper: {
+							container: overlayContainer || undefined,
+						},
+					}}
 					disabled={disabled}
 					loading={loading}
 					options={options}
@@ -59,6 +64,8 @@ export function BasicsSection ({
 	backgrounds,
 	backgroundsLoading,
 	onNext,
+	overlayContainer = null,
+	showNavigation = true,
 }) {
 	const backgroundNames = useMemo(
 		() => [...new Set(backgrounds.map(bg => bg.name))].sort((a, b) => a.localeCompare(b)),
@@ -78,13 +85,16 @@ export function BasicsSection ({
 					disabled={backgroundsLoading}
 					loading={backgroundsLoading}
 					options={backgroundNames}
+					overlayContainer={overlayContainer}
 				/>
 			</Stack>
-			<Stack direction="row" justifyContent="flex-end" sx={{mt: 2}}>
-				<Button type="button" variant="contained" onClick={onNext}>
-					Next
-				</Button>
-			</Stack>
+			{showNavigation && (
+				<Stack direction="row" justifyContent="flex-end" sx={{mt: 2}}>
+					<Button type="button" variant="contained" onClick={onNext}>
+						Next
+					</Button>
+				</Stack>
+			)}
 		</Paper>
 	);
 }

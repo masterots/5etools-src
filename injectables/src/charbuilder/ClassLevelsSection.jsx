@@ -1,8 +1,12 @@
 import React, {useMemo} from "react";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {useForm, useFormState} from "react-final-form";
 import {
+	Accordion,
+	AccordionDetails,
+	AccordionSummary,
 	Box,
 	Button,
 	Card,
@@ -10,9 +14,13 @@ import {
 	CardContent,
 	Chip,
 	Divider,
+	FormControl,
 	Grid,
 	IconButton,
+	InputLabel,
+	MenuItem,
 	Paper,
+	Select,
 	Stack,
 	TextField,
 	Typography,
@@ -75,13 +83,109 @@ function _toIntInRange ({value, min, max, fallback}) {
 	return parsed;
 }
 
-export function ClassLevelsSection ({allClasses, classesLoading, onBack, onNext}) {
+function LevelSelect ({
+	value,
+	onChange,
+	maxLevel,
+	menuProps,
+	minWidth = 120,
+	label = "Level",
+}) {
+	const formControlRef = React.useRef(null);
+	const [anchorEl, setAnchorEl] = React.useState(null);
+
+	const mergedMenuProps = useMemo(() => {
+		return {
+			...(menuProps || {}),
+			anchorEl,
+			anchorOrigin: {
+				vertical: "bottom",
+				horizontal: "left",
+			},
+			transformOrigin: {
+				vertical: "top",
+				horizontal: "left",
+			},
+		};
+	}, [anchorEl, menuProps]);
+
+	return (
+		<FormControl ref={formControlRef} size="small" sx={{minWidth}}>
+			<InputLabel>{label}</InputLabel>
+			<Select
+				value={value}
+				label={label}
+				MenuProps={mergedMenuProps}
+				onOpen={() => {
+					const nextAnchor = formControlRef.current?.querySelector("[role='combobox']") || formControlRef.current;
+					setAnchorEl(nextAnchor || null);
+				}}
+				onClose={() => {
+					setAnchorEl(null);
+				}}
+				onChange={(evt) => {
+					onChange(evt.target.value);
+				}}
+			>
+				{Array.from({length: maxLevel}, (_, idx) => idx + 1).map(level => (
+					<MenuItem key={level} value={level}>Level {level}</MenuItem>
+				))}
+			</Select>
+		</FormControl>
+	);
+}
+
+function ClassDetailPanel ({detailHtml, hasClass}) {
+	return (
+		<Paper
+			variant="outlined"
+			sx={{
+				p: 1.5,
+				minHeight: 420,
+				maxHeight: 620,
+				overflow: "auto",
+				lineHeight: 1.45,
+				"& a, & a:visited": {
+					color: "primary.main",
+					textDecorationColor: "currentColor",
+				},
+				"& a:hover": {
+					textDecorationThickness: "2px",
+				},
+				"& .ve-muted": {
+					color: "text.secondary",
+				},
+			}}
+		>
+			{hasClass ? (
+				<div dangerouslySetInnerHTML={{__html: detailHtml}} />
+			) : (
+				<Typography variant="body2" color="text.secondary">
+					Pick a class card to preview detailed content.
+				</Typography>
+			)}
+		</Paper>
+	);
+}
+
+export function ClassLevelsSection ({allClasses, classesLoading, overlayContainer = null, onBack, onNext, showNavigation = true}) {
 	const form = useForm();
 	const {values} = useFormState({subscription: {values: true}});
 	const [search, setSearch] = React.useState("");
 	const [sourceFilter, setSourceFilter] = React.useState("all");
 	const [previewClassKey, setPreviewClassKey] = React.useState("");
+	const [pendingClassLevel, setPendingClassLevel] = React.useState(1);
+	const [expandedClassKey, setExpandedClassKey] = React.useState("");
 	const [isFiltersExpanded, setIsFiltersExpanded] = React.useState(false);
+	const levelSelectProps = useMemo(() => {
+		if (showNavigation) {
+			return undefined;
+		}
+
+		return {
+			disablePortal: true,
+		};
+	}, [showNavigation]);
 
 	const rows = values.classLevels ?? [];
 	const totalLevel = rows.reduce((acc, row) => acc + (_toIntInRange({value: row.level, min: 1, max: 20, fallback: 1})), 0);
@@ -181,6 +285,42 @@ export function ClassLevelsSection ({allClasses, classesLoading, onBack, onNext}
 		return _getRenderedClassDetailHtml(previewClass);
 	}, [previewClass]);
 
+	const maxPreviewClassLevel = useMemo(() => {
+		if (!previewClass?.name) {
+			return 1;
+		}
+
+		const previewKey = _getClassKey({name: previewClass.name, source: previewClass.source});
+		const existing = rows.find(it => _getClassKey({name: it.className, source: it.classSource}) === previewKey);
+		const existingLevel = existing ? _toIntInRange({value: existing.level, min: 1, max: 20, fallback: 1}) : 0;
+		const otherLevels = totalLevel - existingLevel;
+		return Math.max(1, 20 - otherLevels);
+	}, [previewClass, rows, totalLevel]);
+
+	const handleSelectPreviewClass = () => {
+		if (!previewClass?.name) {
+			return;
+		}
+
+		const classKey = _getClassKey({name: previewClass.name, source: previewClass.source});
+		const nextLevel = _toIntInRange({
+			value: pendingClassLevel,
+			min: 1,
+			max: maxPreviewClassLevel,
+			fallback: 1,
+		});
+
+		if (selectedByKey.has(classKey)) {
+			updateClassLevel({classKey, levelRaw: nextLevel});
+		} else {
+			updateRows([...rows, {className: previewClass.name, classSource: previewClass.source || "", level: nextLevel}]);
+		}
+
+		setExpandedClassKey(classKey);
+	};
+
+	const previewIsSelected = previewClass ? selectedByKey.has(_getClassKey({name: previewClass.name, source: previewClass.source})) : false;
+
 	return (
 		<Paper variant="outlined" sx={{p: 2}}>
 			<Typography variant="h6" gutterBottom>Classes and Levels</Typography>
@@ -278,8 +418,12 @@ export function ClassLevelsSection ({allClasses, classesLoading, onBack, onNext}
 									>
 										<CardActionArea
 											onClick={() => {
-												toggleClassSelected(cls);
+												if (showNavigation) {
+													toggleClassSelected(cls);
+												}
 												setPreviewClassKey(classKey);
+												const existingLevel = selectedByKey.get(classKey)?.level;
+												setPendingClassLevel(_toIntInRange({value: existingLevel ?? 1, min: 1, max: 20, fallback: 1}));
 											}}
 										>
 											<CardContent sx={{pb: "8px !important"}}>
@@ -301,96 +445,197 @@ export function ClassLevelsSection ({allClasses, classesLoading, onBack, onNext}
 							)}
 						</Stack>
 
-						<Divider />
+						{showNavigation && (
+							<>
+								<Divider />
 
-						<Stack spacing={1}>
-							<Typography variant="subtitle2">Selected Classes</Typography>
-							{rows.length === 0 && (
-								<Typography variant="body2" color="text.secondary">
-									Select one or more class cards above to assign levels.
-								</Typography>
-							)}
-							{rows.map(row => {
-								const classKey = _getClassKey({name: row.className, source: row.classSource});
-								const currentLevel = _toIntInRange({value: row.level, min: 1, max: 20, fallback: 1});
-								const maxForRow = Math.max(1, 20 - (totalLevel - currentLevel));
-								return (
-									<Stack key={classKey} direction="row" spacing={1} alignItems="center">
-										<Typography variant="body2" sx={{minWidth: 130}}>{row.className}</Typography>
-										{row.classSource ? <Chip size="small" label={_getSourceLabel(row.classSource)} /> : null}
-										<TextField
-											label="Level"
-											type="number"
-											size="small"
-											value={currentLevel}
-											inputProps={{min: 1, max: maxForRow}}
-											onChange={(evt) => {
-												updateClassLevel({classKey, levelRaw: evt.target.value});
-											}}
-											sx={{width: 110}}
-										/>
-										<IconButton
-											type="button"
-											onClick={() => {
-												removeClassRow(classKey);
-											}}
-											color="error"
-											title="Remove class"
-										>
-											<DeleteIcon fontSize="small" />
-										</IconButton>
-									</Stack>
-								);
-							})}
-						</Stack>
+								<Stack spacing={1}>
+									<Typography variant="subtitle2">Selected Classes</Typography>
+									{rows.length === 0 && (
+										<Typography variant="body2" color="text.secondary">
+											Select one or more class cards above to assign levels.
+										</Typography>
+									)}
+									{rows.map(row => {
+										const classKey = _getClassKey({name: row.className, source: row.classSource});
+										const currentLevel = _toIntInRange({value: row.level, min: 1, max: 20, fallback: 1});
+										const maxForRow = Math.max(1, 20 - (totalLevel - currentLevel));
+										return (
+											<Stack key={classKey} direction="row" spacing={1} alignItems="center">
+												<Typography variant="body2" sx={{minWidth: 130}}>{row.className}</Typography>
+												{row.classSource ? <Chip size="small" label={_getSourceLabel(row.classSource)} /> : null}
+												<TextField
+													label="Level"
+													type="number"
+													size="small"
+													value={currentLevel}
+													inputProps={{min: 1, max: maxForRow}}
+													onChange={(evt) => {
+														updateClassLevel({classKey, levelRaw: evt.target.value});
+													}}
+													sx={{width: 110}}
+												/>
+												<IconButton
+													type="button"
+													onClick={() => {
+														removeClassRow(classKey);
+													}}
+													color="error"
+													title="Remove class"
+												>
+													<DeleteIcon fontSize="small" />
+												</IconButton>
+											</Stack>
+										);
+									})}
+								</Stack>
+							</>
+						)}
 					</Stack>
 				</Grid>
 
 				<Grid size={{xs: 12, md: 6}}>
-					<Paper
-						variant="outlined"
-						sx={{
-							p: 1.5,
-							minHeight: 420,
-							maxHeight: 620,
-							overflow: "auto",
-							lineHeight: 1.45,
-							"& a, & a:visited": {
-								color: "primary.main",
-								textDecorationColor: "currentColor",
-							},
-							"& a:hover": {
-								textDecorationThickness: "2px",
-							},
-							"& .ve-muted": {
-								color: "text.secondary",
-							},
-						}}
-					>
-						{previewClass ? (
-							<div dangerouslySetInnerHTML={{__html: detailHtml}} />
-						) : (
-							<Typography variant="body2" color="text.secondary">
-								Pick a class card to preview detailed content.
-							</Typography>
-						)}
-					</Paper>
+					{showNavigation ? (
+						<ClassDetailPanel detailHtml={detailHtml} hasClass={!!previewClass} />
+					) : (
+						<Stack spacing={1.5}>
+							{rows.length === 0 && (
+								<Stack direction={{xs: "column", sm: "row"}} spacing={1}>
+									<LevelSelect
+										value={pendingClassLevel}
+										maxLevel={maxPreviewClassLevel}
+										menuProps={levelSelectProps}
+										onChange={(nextValue) => {
+											setPendingClassLevel(_toIntInRange({value: nextValue, min: 1, max: maxPreviewClassLevel, fallback: 1}));
+										}}
+									/>
+									<Button
+										type="button"
+										variant="contained"
+										disabled={!previewClass || classesLoading}
+										onClick={handleSelectPreviewClass}
+									>
+										Select Class
+									</Button>
+								</Stack>
+							)}
+
+							{rows.length > 0 ? (
+								<Stack spacing={1}>
+									{rows.map(row => {
+										const classKey = _getClassKey({name: row.className, source: row.classSource});
+										const selectedClassMeta = allClasses.find(cls => _getClassKey({name: cls.name, source: cls.source}) === classKey);
+										const classDetailHtml = _getRenderedClassDetailHtml(selectedClassMeta);
+										const currentLevel = _toIntInRange({value: row.level, min: 1, max: 20, fallback: 1});
+										const maxForRow = Math.max(1, 20 - (totalLevel - currentLevel));
+
+										return (
+											<Accordion
+												key={classKey}
+												expanded={expandedClassKey === classKey}
+												onChange={(_, isExpanded) => {
+													setExpandedClassKey(isExpanded ? classKey : "");
+												}}
+											>
+												<AccordionSummary expandIcon={<ExpandMoreIcon />}>
+													<Stack direction="row" justifyContent="space-between" alignItems="center" sx={{width: "100%", pr: 1}}>
+														<Stack direction="row" spacing={1} alignItems="center" useFlexGap flexWrap="wrap">
+															<Typography variant="subtitle1">{row.className}</Typography>
+															{row.classSource ? <Chip size="small" label={_getSourceLabel(row.classSource)} /> : null}
+														</Stack>
+														<Chip size="small" color="primary" label={`Level ${currentLevel}`} />
+													</Stack>
+												</AccordionSummary>
+												<AccordionDetails>
+													<Stack spacing={1.5}>
+														<Stack direction={{xs: "column", sm: "row"}} spacing={1}>
+															<TextField
+																label="Level"
+																type="number"
+																size="small"
+																value={currentLevel}
+																inputProps={{min: 1, max: maxForRow}}
+																onChange={(evt) => {
+																	updateClassLevel({classKey, levelRaw: evt.target.value});
+																}}
+																sx={{width: 120}}
+															/>
+															<Button
+																type="button"
+																variant="outlined"
+																color="error"
+																onClick={() => {
+																	removeClassRow(classKey);
+																}}
+															>
+																Remove Class
+															</Button>
+														</Stack>
+														{selectedClassMeta ? (
+															<Box
+																sx={{
+																	lineHeight: 1.45,
+																	"& a, & a:visited": {
+																		color: "primary.main",
+																		textDecorationColor: "currentColor",
+																	},
+																	"& .ve-muted": {
+																		color: "text.secondary",
+																	},
+																}}
+																dangerouslySetInnerHTML={{__html: classDetailHtml}}
+															/>
+														) : (
+															<Typography variant="body2" color="text.secondary">
+																Class detail unavailable for this source.
+															</Typography>
+														)}
+													</Stack>
+												</AccordionDetails>
+											</Accordion>
+										);
+									})}
+
+									<Stack direction={{xs: "column", sm: "row"}} spacing={1}>
+										<LevelSelect
+											value={pendingClassLevel}
+											maxLevel={maxPreviewClassLevel}
+											menuProps={levelSelectProps}
+											onChange={(nextValue) => {
+												setPendingClassLevel(_toIntInRange({value: nextValue, min: 1, max: maxPreviewClassLevel, fallback: 1}));
+											}}
+										/>
+										<Button
+											type="button"
+											variant="contained"
+											disabled={!previewClass || classesLoading || previewIsSelected}
+											onClick={handleSelectPreviewClass}
+										>
+											Select Another Class
+										</Button>
+									</Stack>
+								</Stack>
+							) : <ClassDetailPanel detailHtml={detailHtml} hasClass={!!previewClass} />}
+						</Stack>
+					)}
 				</Grid>
 			</Grid>
 
-			<Stack direction="row" justifyContent="space-between" sx={{mt: 2}}>
-				<Button type="button" variant="outlined" onClick={onBack}>
-					Back
-				</Button>
-				<Stack direction="row" spacing={1}>
-					<Button type="button" variant="outlined" startIcon={<AddIcon />} disabled>
-						Tap Class Cards to Add
+			{showNavigation && (
+				<Stack direction="row" justifyContent="space-between" sx={{mt: 2}}>
+					<Button type="button" variant="outlined" onClick={onBack}>
+						Back
 					</Button>
-					<Button type="button" variant="contained" onClick={onNext}>
-						Next
-					</Button>
+					<Stack direction="row" spacing={1}>
+						<Button type="button" variant="outlined" startIcon={<AddIcon />} disabled>
+							Tap Class Cards to Add
+						</Button>
+						<Button type="button" variant="contained" onClick={onNext}>
+							Next
+						</Button>
+					</Stack>
 				</Stack>
-			</Stack>
+			)}
 		</Paper>
 	);
 }
