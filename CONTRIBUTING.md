@@ -201,3 +201,16 @@ Note that while using the service worker, some files are served cache-first (see
 ### Images
 
 Images are generally stored as `.webp` at 85% quality. Token images, and a handful of other small images (for example, UI elements), are stored as lossless `.webp`.
+
+The `img` directory is tracked as a git submodule (`5etools-img`) so image revisions are pinned by commit.
+
+For local development:
+
+- `npm run setup:img` to initialize/update the image submodule.
+- `npm run verify:img` to check that expected image directories exist.
+- `npm run serve:dev:img` to run the full image-aware local flow.
+
+For production/versioned updates:
+
+- `npm run update:img` to move the submodule to the latest upstream image commit.
+- Commit the resulting submodule pointer change (`git add img && git commit ...`) as a normal PR/release change.

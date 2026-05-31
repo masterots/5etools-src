@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<!--5ETOOLS_CMP-->
+	<!--5ETOOLS_ANALYTICS-->
+	<!--5ETOOLS_ADCODE-->
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<meta name="mobile-web-app-capable" content="yes">
+
+	<title>Character Builder - 5etools</title>
+
+	<link rel="stylesheet" href="css/bootstrap.css">
+	<link rel="stylesheet" href="css/fontawesome.css">
+	<link rel="stylesheet" href="css/main.css">
+	<link rel="stylesheet" href="css/statgen-bundle.css">
+
+	<!-- Favicons -->
+	<link rel="icon" type="image/svg+xml" href="favicon.svg">
+	<link rel="icon" type="image/png" sizes="256x256" href="favicon-256x256.png">
+	<link rel="icon" type="image/png" sizes="144x144" href="favicon-144x144.png">
+	<link rel="icon" type="image/png" sizes="128x128" href="favicon-128x128.png">
+	<link rel="icon" type="image/png" sizes="64x64" href="favicon-64x64.png">
+	<link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+
+	<!-- Chrome Web App Icons -->
+	<link rel="manifest" href="manifest.webmanifest">
+	<meta name="application-name" content="5etools">
+	<meta name="theme-color" content="#006bc4">
+
+	<!-- Windows Start Menu tiles -->
+	<meta name="msapplication-config" content="browserconfig.xml"/>
+	<meta name="msapplication-TileColor" content="#006bc4">
+
+	<!-- Apple Touch Icons -->
+	<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png">
+	<link rel="apple-touch-icon" sizes="360x360" href="apple-touch-icon-360x360.png">
+	<link rel="apple-touch-icon" sizes="167x167" href="apple-touch-icon-167x167.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon-120x120.png">
+	<meta name="apple-mobile-web-app-title" content="5etools">
+
+	<!-- macOS Safari Pinned Tab and Touch Bar -->
+	<link rel="mask-icon" href="safari-pinned-tab.svg" color="#006bc4">
+
+	<!-- OpenSearch -->
+	<link rel="search" href="open-search.xml" title="Search 5etools" type="application/opensearchdescription+xml">
+
+	<script type="text/javascript" src="sw-injector.js"></script>
+
+	<script blocking="render" type="module" src="js/styleswitch.js"></script>
+	<script type="text/javascript" src="js/navigation.js"></script>
+	<script type="module" src="js/browsercheck.js"></script>
+</head>
+
+<body>
+
+<div class="overlay-noise no-print"></div>
+
+<div class="cancer__wrp-sidebar cancer__wrp-sidebar-lhs cancer__anchor"><div class="cancer__disp-cancer"></div><div class="cancer__sidebar-inner cancer__sidebar-inner--top cancer__wrp-interactive"><!--5ETOOLS_AD_LEFT_1--></div><div class="cancer__sidebar-inner cancer__sidebar-inner--bottom cancer__wrp-interactive"><!--5ETOOLS_AD_LEFT_2--></div></div>
+<div class="cancer__wrp-sidebar cancer__wrp-sidebar-rhs cancer__anchor"><div class="cancer__disp-cancer"></div><div class="cancer__sidebar-inner cancer__sidebar-inner--top cancer__wrp-interactive"><!--5ETOOLS_AD_RIGHT_1--></div><div class="cancer__sidebar-inner cancer__sidebar-inner--bottom cancer__wrp-interactive"><!--5ETOOLS_AD_RIGHT_2--></div></div>
+
+<div class="viewport-wrapper">
+	<div class="cancer__wrp-leaderboard cancer__anchor"><div class="cancer__disp-cancer"></div><div class="cancer__wrp-leaderboard-inner cancer__wrp-interactive"><!--5ETOOLS_AD_LEADERBOARD--></div></div>
+
+	<div class="ve-flex-col" data-cancer-id="cancer-header">
+		<header class="ve-mobile-sm__hidden page__header">
+			<div class="container ve-flex-v-baseline">
+				<h1 class="page__title ve-no-wrap ve-my-0" id="page__title">Character Builder</h1>
+				<p class="page__subtitle ve-no-wrap ve-my-0" id="page__subtitle">PHB step-by-step form scaffold (structure only, no data wiring yet).</p>
+			</div>
+		</header>
+
+		<nav class="container page__nav" id="navigation">
+			<ul class="nav nav-pills page__nav-inner" id="navbar"></ul>
+		</nav>
+	</div>
+
+	<main class="container container--main" data-cancer-id="cancer-wrapper">
+		<div class="row">
+			<div class="ve-col-12">
+				<form id="character-builder-form" class="ve-flex-col ve-gap-3 ve-mt-3 ve-mb-5" autocomplete="off">
+					<section>
+						<h3>Step 1: Choose a Race</h3>
+						<div class="row">
+							<div class="ve-col-12 ve-col-md-6">
+								<div class="ve-flex-col">
+									<label for="species">Race</label>
+									<select id="species" name="species" class="form-control">
+										<option value="">Select a species...</option>
+									</select>
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-6">
+								<div class="ve-flex-col">
+									<label for="subspecies">Subspecies</label>
+									<select id="subspecies" name="subspecies" class="form-control">
+										<option value="">Select a subspecies...</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row ve-mt-2">
+							<div class="ve-col-12">
+								<div class="ve-flex-col">
+									<label for="species-notes">Species Notes</label>
+									<textarea id="species-notes" name="speciesNotes" class="form-control" rows="2" placeholder="Traits, movement speed, languages, etc."></textarea>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<hr>
+
+					<section>
+						<h3>Step 2: Choose a Class</h3>
+						<div class="row">
+							<div class="ve-col-12 ve-col-md-6">
+								<div class="ve-flex-col">
+									<label for="class">Class</label>
+									<select id="class" name="class" class="form-control">
+										<option value="">Select a class...</option>
+									</select>
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-6">
+								<div class="ve-flex-col">
+									<label for="level">Starting Level</label>
+									<input id="level" name="level" type="number" class="form-control" min="1" max="20" value="1">
+								</div>
+							</div>
+						</div>
+						<div class="row ve-mt-2">
+							<div class="ve-col-12 ve-col-md-6">
+								<div class="ve-flex-col">
+									<label for="subclass">Subclass / Archetype</label>
+									<select id="subclass" name="subclass" class="form-control">
+										<option value="">Select a subclass...</option>
+									</select>
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-6">
+								<div class="ve-flex-col">
+									<label for="xp">Experience Points</label>
+									<input id="xp" name="xp" type="number" class="form-control" min="0" value="0">
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<hr>
+
+					<section>
+						<h3>Step 3: Determine Ability Scores</h3>
+						<div class="row">
+							<div class="ve-col-12">
+								<label class="ve-block">Ability Generation Method</label>
+								<label class="ve-inline-block ve-mr-2"><input type="radio" name="abilityMethod" value="standard" checked> Standard Array</label>
+								<label class="ve-inline-block ve-mr-2"><input type="radio" name="abilityMethod" value="pointBuy"> Point Buy</label>
+								<label class="ve-inline-block ve-mr-2"><input type="radio" name="abilityMethod" value="rolled"> Rolled</label>
+								<label class="ve-inline-block"><input type="radio" name="abilityMethod" value="manual"> Manual</label>
+							</div>
+						</div>
+						<div class="row ve-mt-2">
+							<div class="ve-col-12 ve-col-md-2">
+								<div class="ve-flex-col">
+									<label for="str">STR</label>
+									<input id="str" name="str" type="number" class="form-control" min="1" max="30" value="8">
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-2">
+								<div class="ve-flex-col">
+									<label for="dex">DEX</label>
+									<input id="dex" name="dex" type="number" class="form-control" min="1" max="30" value="8">
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-2">
+								<div class="ve-flex-col">
+									<label for="con">CON</label>
+									<input id="con" name="con" type="number" class="form-control" min="1" max="30" value="8">
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-2">
+								<div class="ve-flex-col">
+									<label for="int">INT</label>
+									<input id="int" name="int" type="number" class="form-control" min="1" max="30" value="8">
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-2">
+								<div class="ve-flex-col">
+									<label for="wis">WIS</label>
+									<input id="wis" name="wis" type="number" class="form-control" min="1" max="30" value="8">
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-2">
+								<div class="ve-flex-col">
+									<label for="cha">CHA</label>
+									<input id="cha" name="cha" type="number" class="form-control" min="1" max="30" value="8">
+								</div>
+							</div>
+						</div>
+						<div class="row ve-mt-2">
+							<div class="ve-col-12 ve-col-md-4">
+								<div class="ve-flex-col">
+									<label for="ability-notes">Ability Notes</label>
+									<textarea id="ability-notes" name="abilityNotes" class="form-control" rows="2" placeholder="Racial increases, point budget, roll log, etc."></textarea>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<hr>
+
+					<section>
+						<h3>Step 4: Describe Your Character</h3>
+						<div class="row">
+							<div class="ve-col-12 ve-col-md-4">
+								<div class="ve-flex-col">
+									<label for="name">Name</label>
+									<input id="name" name="name" type="text" class="form-control" placeholder="Character name">
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-4">
+								<div class="ve-flex-col">
+									<label for="alignment">Alignment</label>
+									<select id="alignment" name="alignment" class="form-control">
+										<option value="">Select alignment...</option>
+									</select>
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-4">
+								<div class="ve-flex-col">
+									<label for="background">Background</label>
+									<select id="background" name="background" class="form-control">
+										<option value="">Select background...</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row ve-mt-2">
+							<div class="ve-col-12 ve-col-md-3">
+								<div class="ve-flex-col">
+									<label for="age">Age</label>
+									<input id="age" name="age" type="text" class="form-control" placeholder="e.g. 42">
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-3">
+								<div class="ve-flex-col">
+									<label for="sex">Sex / Gender</label>
+									<input id="sex" name="sex" type="text" class="form-control">
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-3">
+								<div class="ve-flex-col">
+									<label for="height">Height</label>
+									<input id="height" name="height" type="text" class="form-control" placeholder="e.g. 5'11\"">
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-3">
+								<div class="ve-flex-col">
+									<label for="weight">Weight</label>
+									<input id="weight" name="weight" type="text" class="form-control" placeholder="e.g. 180 lb">
+								</div>
+							</div>
+						</div>
+						<div class="row ve-mt-2">
+							<div class="ve-col-12 ve-col-md-6">
+								<div class="ve-flex-col">
+									<label for="traits">Personality Traits</label>
+									<textarea id="traits" name="traits" class="form-control" rows="2"></textarea>
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-6">
+								<div class="ve-flex-col">
+									<label for="ideals">Ideals</label>
+									<textarea id="ideals" name="ideals" class="form-control" rows="2"></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="row ve-mt-2">
+							<div class="ve-col-12 ve-col-md-6">
+								<div class="ve-flex-col">
+									<label for="bonds">Bonds</label>
+									<textarea id="bonds" name="bonds" class="form-control" rows="2"></textarea>
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-6">
+								<div class="ve-flex-col">
+									<label for="flaws">Flaws</label>
+									<textarea id="flaws" name="flaws" class="form-control" rows="2"></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="row ve-mt-2">
+							<div class="ve-col-12">
+								<div class="ve-flex-col">
+									<label for="backstory">Backstory</label>
+									<textarea id="backstory" name="backstory" class="form-control" rows="3"></textarea>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<hr>
+
+					<section>
+						<h3>Step 5: Choose Equipment</h3>
+						<div class="row">
+							<div class="ve-col-12">
+								<label class="ve-block">Equipment Method</label>
+								<label class="ve-inline-block ve-mr-2"><input type="radio" name="equipmentMethod" value="package" checked> Class + Background Packages</label>
+								<label class="ve-inline-block"><input type="radio" name="equipmentMethod" value="gold"> Buy with Starting Gold</label>
+							</div>
+						</div>
+						<div class="row ve-mt-2">
+							<div class="ve-col-12 ve-col-md-3">
+								<div class="ve-flex-col">
+									<label for="currency-gp">Gold (GP)</label>
+									<input id="currency-gp" name="currencyGp" type="number" class="form-control" min="0" value="0">
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-3">
+								<div class="ve-flex-col">
+									<label for="currency-sp">Silver (SP)</label>
+									<input id="currency-sp" name="currencySp" type="number" class="form-control" min="0" value="0">
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-3">
+								<div class="ve-flex-col">
+									<label for="currency-cp">Copper (CP)</label>
+									<input id="currency-cp" name="currencyCp" type="number" class="form-control" min="0" value="0">
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-3">
+								<div class="ve-flex-col">
+									<label for="ac">Armor Class (manual)</label>
+									<input id="ac" name="ac" type="number" class="form-control" min="0" value="10">
+								</div>
+							</div>
+						</div>
+						<div class="row ve-mt-2">
+							<div class="ve-col-12">
+								<div class="ve-flex-col">
+									<label for="equipment-list">Equipment / Inventory</label>
+									<textarea id="equipment-list" name="equipmentList" class="form-control" rows="4" placeholder="One item per line"></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="row ve-mt-2">
+							<div class="ve-col-12 ve-col-md-6">
+								<div class="ve-flex-col">
+									<label for="weapons-list">Weapons</label>
+									<textarea id="weapons-list" name="weaponsList" class="form-control" rows="2" placeholder="Weapon, attack bonus, damage"></textarea>
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-6">
+								<div class="ve-flex-col">
+									<label for="trinket">Trinket</label>
+									<input id="trinket" name="trinket" type="text" class="form-control">
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<hr>
+
+					<section>
+						<h3>Step 6: Come Together</h3>
+						<div class="row">
+							<div class="ve-col-12 ve-col-md-4">
+								<div class="ve-flex-col">
+									<label for="party-role">Party Role</label>
+									<input id="party-role" name="partyRole" type="text" class="form-control" placeholder="Tank, support, scout, face...">
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-4">
+								<div class="ve-flex-col">
+									<label for="party-connection">Party Connection</label>
+									<input id="party-connection" name="partyConnection" type="text" class="form-control" placeholder="How you know the group">
+								</div>
+							</div>
+							<div class="ve-col-12 ve-col-md-4">
+								<div class="ve-flex-col">
+									<label for="campaign-notes">Campaign Notes</label>
+									<input id="campaign-notes" name="campaignNotes" type="text" class="form-control" placeholder="DM constraints, setting notes">
+								</div>
+							</div>
+						</div>
+						<div class="row ve-mt-2">
+							<div class="ve-col-12">
+								<div class="ve-flex-col">
+									<label for="session-zero">Session Zero Agreements</label>
+									<textarea id="session-zero" name="sessionZero" class="form-control" rows="3"></textarea>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<hr>
+
+					<section>
+						<h3>Character Summary</h3>
+						<div class="row">
+							<div class="ve-col-12">
+								<div class="ve-flex-col">
+									<label for="summary">Summary / Build Intent</label>
+									<textarea id="summary" name="summary" class="form-control" rows="4" placeholder="High-level build goals, fantasy, and table expectations."></textarea>
+								</div>
+							</div>
+						</div>
+					</section>
+				</form>
+			</div>
+		</div>
+	</main>
+</div>
+
+<!--5ETOOLS_SCRIPT_ANCHOR-->
+<!--5ETOOLS_AD_ADHESION-->
+
+<script type="text/javascript" defer src="js/parser.js"></script>
+<script type="text/javascript" defer src="js/utils.js"></script>
+<script type="text/javascript" defer src="js/utils-ui.js"></script>
+<script type="text/javascript" defer src="lib/localforage.js"></script>
+<script type="module" defer src="js/omnidexer.js"></script>
+<script type="module" src="js/omnisearch.js"></script>
+<script type="module" src="js/filter.js"></script>
+<script type="module" src="js/utils-dataloader.js"></script>
+<script type="module" src="js/utils-font.js"></script>
+<script type="module" src="js/utils-brew.js"></script>
+<script type="module" src="js/utils-config.js"></script>
+<script type="text/javascript" defer src="js/render.js"></script>
+<script type="text/javascript" defer src="js/render-dice.js"></script>
+<script type="module" src="js/shim-esmodules.js"></script>
+<script type="text/javascript" defer src="js/hist.js"></script>
+<script type="module" defer src="js/list2.js"></script>
+<script type="text/javascript" defer src="lib/elasticlunr.js"></script>
+
+</body>
+</html>
