@@ -12,6 +12,10 @@ Please see [our wiki](https://wiki.tercept.net/) for FAQs, installation guides, 
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## React Injectables (Vite)
+
+For additive React/Vite "island" components that can be injected into existing pages, see [injectables/README.md](injectables/README.md).
+
 ## License
 
 This project is licensed under the terms of the MIT license.

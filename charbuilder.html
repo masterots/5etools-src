@@ -81,11 +81,10 @@
 <div class="cancer__wrp-sidebar cancer__wrp-sidebar-rhs cancer__wrp-sidebar-rhs--scrolling-page cancer__anchor"><div class="cancer__disp-cancer"></div><div class="cancer__sidebar-inner cancer__sidebar-inner--top cancer__wrp-interactive"><!--5ETOOLS_AD_RIGHT_1--></div><div class="cancer__sidebar-inner cancer__sidebar-inner--bottom cancer__wrp-interactive"><!--5ETOOLS_AD_RIGHT_2--></div></div>
 
 <main class="container" data-cancer-id="cancer-wrapper">
-	<div class="charbuilder__toolbar no-print">
-		<button class="ve-btn ve-btn-default" id="btn-reset-form" type="button">Reset Form</button>
-		<span class="charbuilder__toolbar-note">Client-side only. No save/export yet.</span>
-	</div>
+	<div data-5etools-island="charbuilder"></div>
 
+	<!-- legacy form kept below as reference only – now rendered by React -->
+	<template id="charbuilder-legacy-form">
 	<form id="charbuilder-form" class="charbuilder__form">
 		<section class="charbuilder__panel">
 			<h3 class="charbuilder__panel-title">Character Basics</h3>
@@ -113,12 +112,22 @@
 					<input class="ve-form-control" id="char-class" type="text" placeholder="e.g. Wizard">
 				</div>
 				<div class="col-md-4 col-sm-6 form-group">
-					<label for="char-species">Species</label>
-					<input class="ve-form-control" id="char-species" type="text" placeholder="e.g. Human">
+					<label for="char-species">Race</label>
+					<select class="ve-form-control" id="char-species">
+						<option value="">Loading races…</option>
+					</select>
 				</div>
 				<div class="col-md-4 col-sm-6 form-group">
 					<label for="char-background">Background</label>
 					<input class="ve-form-control" id="char-background" type="text" placeholder="e.g. Sage">
+				</div>
+			</div>
+			<div class="row" id="char-subrace-row" style="display:none;">
+				<div class="col-md-4 col-sm-6 form-group">
+					<label for="char-subrace">Subrace</label>
+					<select class="ve-form-control" id="char-subrace">
+						<option value="">— choose a subrace —</option>
+					</select>
 				</div>
 			</div>
 		</section>
@@ -241,33 +250,7 @@
 			</div>
 		</section>
 	</form>
-
-	<template id="equipment-row-template">
-		<div class="charbuilder__equipment-row">
-			<div class="row">
-				<div class="col-sm-5 form-group">
-					<label>Item</label>
-					<input class="ve-form-control" type="text" placeholder="e.g. Longsword">
-				</div>
-				<div class="col-sm-2 col-xs-6 form-group">
-					<label>Qty</label>
-					<input class="ve-form-control" type="number" min="1" value="1">
-				</div>
-				<div class="col-sm-2 col-xs-6 form-group">
-					<label>Weight</label>
-					<input class="ve-form-control" type="text" placeholder="lb">
-				</div>
-				<div class="col-sm-2 col-xs-6 form-group">
-					<label>Cost</label>
-					<input class="ve-form-control" type="text" placeholder="gp">
-				</div>
-				<div class="col-sm-1 col-xs-6 form-group charbuilder__equipment-remove-col">
-					<label class="ve-hidden-xs">&nbsp;</label>
-					<button class="ve-btn ve-btn-danger ve-btn-sm charbuilder__btn-remove-equipment" type="button" title="Remove row"><span class="glyphicon glyphicon-trash"></span></button>
-				</div>
-			</div>
-		</div>
-	</template>
+	</template><!-- /charbuilder-legacy-form -->
 </main>
 
 <!--5ETOOLS_SCRIPT_ANCHOR-->
@@ -288,7 +271,11 @@
 <script type="text/javascript" defer src="js/render-dice.js"></script>
 <script type="module" src="js/shim-esmodules.js"></script>
 <script type="text/javascript" defer src="js/hist.js"></script>
-<script type="text/javascript" defer src="js/charbuilder.js"></script>
+<script type="module">
+	import {loadInjectablesModule} from "./js/injectables-loader.js";
+	const mod = await loadInjectablesModule();
+	mod.mountIslands();
+</script>
 <script type="module" defer src="js/list2.js"></script>
 <script type="text/javascript" defer src="lib/elasticlunr.js"></script>
 
